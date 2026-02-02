@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Particle Text</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="hint">HOVER TO INTERACT • TYPE TO CREATE</div>
+    
+    <div class="particle-info">
+        Particles: <span class="particle-count" id="particleCount">0</span>
+    </div>
+
+    <div id="container"></div>
+
+    <div class="controls">
+        <div class="input-wrapper">
+            <input type="text" id="textInput" value="HELLO" placeholder="Type text..." maxlength="12">
+        </div>
+        
+        <div class="color-picker-wrapper">
+            <div class="color-display" id="colorDisplay" style="background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);">
+                <input type="color" id="colorPicker" value="#a78bfa">
+            </div>
+        </div>
+        
+        <button id="createBtn">
+            <svg class="settings-icon" viewBox="0 0 24 24">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            Generate
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
