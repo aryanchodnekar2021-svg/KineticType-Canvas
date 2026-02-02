@@ -14,16 +14,35 @@ canvas.height = window.innerHeight;
 let particleArray = [];
 let currentColor = '#a78bfa';
 
-// Enhanced Mouse Interaction
+// --- INTERACTION HANDLING (MOUSE & TOUCH) ---
 const mouse = {
     x: null,
     y: null,
     radius: 120
 }
 
+// Handle Mouse Moves
 window.addEventListener('mousemove', function(event){
     mouse.x = event.x;
     mouse.y = event.y;
+});
+
+// Handle Touch Moves (Mobile)
+window.addEventListener('touchmove', function(event){
+    event.preventDefault(); // Prevents screen scrolling while touching canvas
+    mouse.x = event.touches[0].clientX;
+    mouse.y = event.touches[0].clientY;
+}, { passive: false });
+
+window.addEventListener('touchstart', function(event){
+    event.preventDefault();
+    mouse.x = event.touches[0].clientX;
+    mouse.y = event.touches[0].clientY;
+}, { passive: false });
+
+window.addEventListener('touchend', function(){
+    mouse.x = null;
+    mouse.y = null;
 });
 
 // Optimized Particle Class
@@ -83,11 +102,17 @@ class Particle {
     }
 }
 
+// --- INITIALIZATION FUNCTION (RESPONSIVE) ---
 function init(text){
     particleArray = [];
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 1. Dynamic Font Size: Scales with screen width
+    // max size 140px, min size based on width/5
+    let fontSize = Math.min(canvas.width / 5, 140); 
+    
     ctx.fillStyle = 'white';
-    ctx.font = 'bold 140px Inter, Verdana';
+    ctx.font = `bold ${fontSize}px Inter, Verdana`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     
@@ -95,9 +120,13 @@ function init(text){
 
     const textCoordinates = ctx.getImageData(0, 0, canvas.width, canvas.height);
     
-    // OPTIMIZED: Increased step size for fewer particles
-    for (let y = 0; y < textCoordinates.height; y += 4) {
-        for (let x = 0; x < textCoordinates.width; x += 4) {
+    // 2. Performance Optimization for Mobile
+    // If screen is narrow (mobile), skip more pixels (step = 8) to reduce particle count
+    // On desktop, use high detail (step = 4)
+    const step = canvas.width < 600 ? 8 : 4;
+
+    for (let y = 0; y < textCoordinates.height; y += step) {
+        for (let x = 0; x < textCoordinates.width; x += step) {
             if (textCoordinates.data[(y * 4 * textCoordinates.width) + (x * 4) + 3] > 128) {
                 particleArray.push(new Particle(x, y, currentColor));
             }
@@ -116,7 +145,7 @@ function animate(){
         particleArray[i].draw();
     }
     
-    // OPTIMIZED: Only connect when mouse is active and limit connections
+    // Only connect when mouse/touch is active
     if (mouse.x !== null && mouse.y !== null) {
         connectNearMouse();
     }
@@ -124,7 +153,6 @@ function animate(){
     requestAnimationFrame(animate);
 }
 
-// OPTIMIZED: Only connect particles near the mouse
 function connectNearMouse(){
     const nearbyParticles = [];
     
