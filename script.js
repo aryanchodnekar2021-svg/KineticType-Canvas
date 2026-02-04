@@ -27,20 +27,22 @@ window.addEventListener('mousemove', function(event){
     mouse.y = event.y;
 });
 
+// --- UPDATED TOUCH HANDLERS (Fixes Mobile Typing) ---
+
 // Handle Touch Moves (Mobile)
-window.addEventListener('touchmove', function(event){
-    event.preventDefault(); // Prevents screen scrolling while touching canvas
+canvas.addEventListener('touchmove', function(event){
+    event.preventDefault(); // This now only prevents scrolling when touching the background
     mouse.x = event.touches[0].clientX;
     mouse.y = event.touches[0].clientY;
 }, { passive: false });
 
-window.addEventListener('touchstart', function(event){
-    event.preventDefault();
+canvas.addEventListener('touchstart', function(event){
+    event.preventDefault(); // This stops the background from doing weird stuff, but lets UI work
     mouse.x = event.touches[0].clientX;
     mouse.y = event.touches[0].clientY;
 }, { passive: false });
 
-window.addEventListener('touchend', function(){
+canvas.addEventListener('touchend', function(){
     mouse.x = null;
     mouse.y = null;
 });
